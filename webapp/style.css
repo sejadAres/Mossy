@@ -1,0 +1,360 @@
+/* ===== Variabelen ===== */
+:root {
+  --bg1: #ffffff;
+  --bg2: #ffffff;
+  --card: #e2f2cb99;
+  --text: #1B455B;
+  --muted: #55727f;
+  --accent: #64b255;
+  --ring: #e2f2cb;
+  --navy: #1B455B;
+  --lime: #96cc4b;
+}
+
+/* ===== Basis ===== */
+* { box-sizing: border-box; }
+
+html, body { height: 100%; margin: 0; }
+
+body {
+  /* ruimte voor de notch / home-balk op telefoons */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: linear-gradient(var(--bg1), var(--bg2));
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+html, body, button, summary, input { touch-action: manipulation; }
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ===== Layout ===== */
+#app {
+  width: 100%;
+  max-width: 430px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg1);
+  color: var(--text);
+  transition: background .5s, color .5s;
+}
+
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 22px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  scrollbar-width: none;
+}
+main::-webkit-scrollbar { display: none; }
+
+h1 { font-size: 22px; font-weight: 600; margin: 0 0 4px; align-self: flex-start; }
+p.sub { margin: 0 0 24px; color: var(--muted); font-size: 14px; align-self: flex-start; }
+
+.screen { display: none; width: 100%; flex-direction: column; align-items: center; flex: 1; }
+.screen.on { display: flex; }
+
+/* Kop met mini-Mossy rechts */
+.hd { width: 100%; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.hd p.sub { margin-bottom: 12px; }
+.mini { width: 72px; height: 72px; object-fit: contain; flex-shrink: 0; }
+
+/* ===== Knoppen ===== */
+.primary {
+  background: var(--navy);
+  color: #fff;
+  padding: 14px 38px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: auto;
+  margin-bottom: 12px;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.chip { background: var(--card); padding: 10px 20px; border-radius: 999px; font-size: 15px; }
+.chip.on { background: var(--navy); color: #fff; font-weight: 600; }
+.pick { align-self: flex-start; margin-bottom: 14px; }
+
+.lbl { align-self: flex-start; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+
+input[type=range] { width: 100%; accent-color: var(--accent); margin: 8px 0 16px; }
+
+/* ===== Welkomstscherm ===== */
+#welcome {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  transition: opacity .4s;
+}
+#welcome img { width: min(260px, 70vw); animation: fl 4s ease-in-out infinite; }
+#welcome h2 { font-size: 34px; margin: 12px 0 4px; color: var(--text); }
+#welcome p { color: var(--muted); margin: 0 0 28px; }
+#welcome .primary { margin: 0; }
+
+@keyframes fl { 50% { transform: translateY(-8px); } }
+
+/* ===== Ademhaling ===== */
+.stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  min-height: 280px;
+}
+
+#orb {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #96cc4b, #64b255);
+  transform: scale(1);
+  box-shadow: 0 0 50px #96cc4baa;
+}
+
+#phase { position: absolute; font-size: 18px; font-weight: 500; color: var(--navy); pointer-events: none; }
+
+/* ===== Geluiden ===== */
+#list { width: 100%; }
+
+.card {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--ring);
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+}
+.card.on { outline: 2px solid var(--accent); }
+.card .ic { font-size: 26px; }
+.card b { display: block; font-size: 16px; }
+.card span { font-size: 13px; color: var(--muted); }
+.card .st { margin-left: auto; font-size: 13px; font-weight: 600; color: var(--navy); }
+
+/* ===== Mediteren ===== */
+#s-med .stage { min-height: 0; }
+#s-med .chips { margin-bottom: 8px; }
+#s-med .primary { margin-top: 4px; }
+.stage > svg { width: 262px; height: 262px; }
+#time { font-size: 36px; font-weight: 300; font-variant-numeric: tabular-nums; line-height: 1.1; }
+#time.done { font-size: 17px; font-weight: 600; }
+
+/* chips zijn vergrendeld zolang de timer loopt */
+#chips.locked .chip:not(.on) { opacity: .45; cursor: not-allowed; }
+
+/* inhoud in de cirkel: +1 min, tijd, knoppen */
+.dial { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.plus {
+  background: var(--card);
+  border: 1px solid var(--ring);
+  color: var(--navy);
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.ctrls { display: flex; gap: 6px; margin-top: 2px; }
+.ctl {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--card);
+  border: 1px solid var(--ring);
+  color: var(--navy);
+  border-radius: 999px;
+  padding: 6px 11px 6px 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.ctl svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+.ctl .i-play { display: none; }
+.ctl.paused .i-pause { display: none; }
+.ctl.paused .i-play { display: block; }
+.plus:disabled, .ctl:disabled { opacity: .35; cursor: default; }
+
+/* status onder de cirkel */
+.mstate { min-height: 18px; margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+#s-med.is-paused #time { animation: blink 1.2s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: .35; } }
+
+/* onderwerp-kaart */
+.topic {
+  width: 100%;
+  min-height: 92px;
+  background: var(--card);
+  border: 1px solid var(--ring);
+  border-radius: 18px;
+  padding: 14px 18px;
+  margin-top: 6px;
+  text-align: left;
+}
+.topic p { margin: 0; font-size: 15px; line-height: 1.45; color: var(--text); }
+.topic p.empty { color: var(--muted); font-size: 14px; }
+.topic.pop { animation: pop .3s ease-out; }
+@keyframes pop { from { opacity: 0; transform: translateY(6px); } }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  color: var(--navy);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.tag[hidden] { display: none; }
+.tag .dd { width: 8px; height: 8px; margin-right: 6px; }
+
+.topic-actions { width: 100%; display: flex; justify-content: flex-end; gap: 10px; align-items: center; margin: 10px 0 8px; }
+.sec {
+  background: none;
+  border: 1.5px solid var(--ring);
+  color: var(--navy);
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.sec[hidden] { display: none; }
+.gen {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1.5px solid var(--accent);
+  color: var(--navy);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-weight: 600;
+  font-size: 15px;
+}
+.gen .spin { display: inline-block; font-size: 18px; }
+.gen.go-spin .spin { animation: spin .45s ease-out; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== Tips ===== */
+.tip, .tipcard {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--ring);
+  border-radius: 18px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+.tipcard { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.tipcard b { display: block; }
+.tipcard span { font-size: 13px; color: var(--muted); }
+
+.tip summary { font-weight: 600; cursor: pointer; list-style: none; }
+.tip summary::-webkit-details-marker { display: none; }
+.tip summary::after { content: "+"; float: right; color: var(--muted); }
+.tip[open] summary::after { content: "\2013"; }
+.tip p { margin: 8px 0 0; font-size: 14px; line-height: 1.45; color: var(--muted); }
+.tip ul { margin: 8px 0 0; padding-left: 20px; font-size: 14px; line-height: 1.6; color: var(--muted); }
+.tip .asp { font-size: 13px; margin: 8px 0 6px; }
+
+.tp {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 1.45;
+  padding: 10px 0;
+  border-top: 1px solid var(--ring);
+}
+.gw { border-top: 1px solid var(--ring); padding-top: 12px; margin-top: 2px; }
+.go { background: var(--navy); color: #fff; border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; }
+
+/* Gekleurde bolletjes per domein */
+.dd { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 10px; }
+.dd-body    { background: #e5202e; }
+.dd-mind    { background: #1f86c8; }
+.dd-meaning { background: #7b3f98; }
+.dd-life    { background: #f7a21b; }
+.dd-social  { background: #f26a21; }
+.dd-daily   { background: #7ab536; }
+
+.note { font-size: 13px; color: var(--muted); margin: 6px 0 12px; line-height: 1.4; text-align: left; width: 100%; }
+
+/* ===== Rekken ===== */
+.stretch-stage { min-height: 0; flex-direction: column; text-align: center; }
+#stEmoji { font-size: 72px; }
+#stName { font-size: 22px; font-weight: 600; margin-top: 6px; }
+#stText { align-self: center; max-width: 300px; margin: 6px 0 12px; }
+#sLeft { font-size: 15px; color: var(--muted); min-height: 20px; margin-top: 6px; }
+
+.dots { display: flex; gap: 6px; margin: 4px 0 12px; }
+.dots b { width: 9px; height: 9px; border-radius: 50%; background: var(--ring); }
+.dots b.on { background: var(--accent); }
+
+.bar { width: 220px; height: 8px; border-radius: 99px; background: var(--ring); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 1s linear; }
+
+#stClock { font-size: 14px; color: var(--muted); margin-top: 8px; min-height: 18px; }
+
+/* ===== Navigatie ===== */
+nav { display: flex; border-top: 1px solid var(--ring); padding: 8px 0 6px; }
+nav button {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  padding: 8px 2px;
+  color: var(--muted);
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+nav button i { font-style: normal; font-size: 22px; }
+nav button.on { color: var(--navy); font-weight: 600; }
+nav button.on i { background: var(--lime); border-radius: 999px; padding: 2px 16px; }
+
+/* ===== Nachtmodus (zet class="night" op #app) ===== */
+#app.night { background: #1B455B; --text: #e2f2cb; --muted: #a9c9b3; --card: #ffffff14; --ring: #ffffff26; }
+#app.night .primary,
+#app.night .chip.on { background: var(--lime); color: #1B455B; }
+#app.night nav button.on { color: #e2f2cb; }
+#app.night .card .st { color: var(--lime); }
+#app.night .go { background: var(--lime); color: #1B455B; }
+#app.night .gen, #app.night .tag { background: #ffffff14; color: var(--text); }
+#app.night .plus, #app.night .ctl, #app.night .sec { color: var(--text); }
+
+/* ===== Minder beweging ===== */
+@media (prefers-reduced-motion: reduce) {
+  #welcome img,
+  .topic.pop,
+  .gen.go-spin .spin { animation: none; }
+  #s-med.is-paused #time { animation: none; opacity: .5; }
+}

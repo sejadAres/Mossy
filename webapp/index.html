@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>Mossy</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- Welkomstscherm -->
+  <div id="welcome">
+    <img src="images/mossy.png" alt="Mossy, een klein mosdraakje">
+    <h2>Mossy</h2>
+    <p>Adem. Luister. Kom tot rust.</p>
+    <button class="primary" id="go">Start</button>
+  </div>
+
+  <div id="app">
+    <main>
+
+      <!-- Ademhaling -->
+      <section class="screen on" id="s-breathe">
+        <div class="hd">
+          <div>
+            <h1>Ademhaling</h1>
+            <p class="sub">In 4 · vasthouden 4 · uit 6</p>
+          </div>
+          <img class="mini" src="images/mossy.png" alt="">
+        </div>
+        <div class="stage">
+          <div id="orb"></div>
+          <div id="phase">Klaar</div>
+        </div>
+        <button class="primary" id="bBtn">Start</button>
+      </section>
+
+      <!-- Geluiden -->
+      <section class="screen" id="s-sounds">
+        <div class="hd">
+          <div>
+            <h1>Geluiden</h1>
+            <p class="sub">Tik om af te spelen. Tik nogmaals om te stoppen.</p>
+          </div>
+          <img class="mini" src="images/mossy-headphones.png" alt="">
+        </div>
+        <div id="list"></div>
+        <label class="lbl" for="vol">Volume</label>
+        <input type="range" id="vol" min="0" max="100" value="50">
+      </section>
+
+      <!-- Mediteren -->
+      <section class="screen" id="s-med">
+        <div class="hd">
+          <div>
+            <h1>Mediteren</h1>
+            <p class="sub">Kies een duur en kom tot rust.</p>
+          </div>
+          <img class="mini" src="images/mossy-yoga.png" alt="">
+        </div>
+        <div class="chips" id="chips"></div>
+        <div class="stage">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" fill="none" stroke="var(--ring)" stroke-width="5"/>
+            <circle id="arc" cx="60" cy="60" r="54" fill="none" stroke="var(--accent)" stroke-width="5"
+                    stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="dial">
+            <button class="plus" id="mPlus" disabled aria-label="Eén minuut erbij">+1 min</button>
+            <div id="time" role="timer" aria-live="off">5:00</div>
+            <div class="ctrls">
+              <button class="ctl" id="mPause" disabled>
+                <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="5" width="3.5" height="14" rx="1"/><rect x="13.5" y="5" width="3.5" height="14" rx="1"/></svg>
+                <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+                <span>Pauze</span>
+              </button>
+              <button class="ctl" id="mRestart" title="Zet de timer en het onderwerp terug naar het begin">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12a7 7 0 1 0 2.1-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M4.5 3.5v4.5H9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Opnieuw</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <p id="mState" class="mstate" aria-live="polite"></p>
+        <button class="primary" id="mBtn">Begin</button>
+
+        <!-- Onderwerp om over na te denken -->
+        <div class="topic" id="topic" aria-live="polite">
+          <span class="tag" id="topicTag" hidden><i class="dd"></i><span></span></span>
+          <p id="topicText" class="empty">Tik op <b>Genereer</b> voor een onderwerp om over na te denken tijdens het mediteren.</p>
+        </div>
+        <div class="topic-actions">
+          <button class="sec" id="prevBtn" hidden>← Vorig onderwerp</button>
+          <button class="gen" id="genBtn"><span class="spin" aria-hidden="true">🔄</span>Genereer</button>
+        </div>
+      </section>
+
+      <!-- Tips: Positieve Gezondheid -->
+      <section class="screen" id="s-tips">
+        <div class="hd">
+          <div>
+            <h1>Positieve Gezondheid</h1>
+            <p class="sub">Zes domeinen. Kies er één voor tips.</p>
+          </div>
+          <img class="mini" src="images/mossy-book.png" alt="">
+        </div>
+
+        <details class="tip">
+          <summary><i class="dd dd-body"></i>Lichaamsfuncties</summary>
+          <p class="asp">Gezond voelen, fitheid, slapen, eten, bewegen en meer</p>
+          <div class="tp"><span>Leg je telefoon 30 minuten voor het slapen weg.</span></div>
+          <div class="tp"><span>Drink een glas water en eet iets voordat je gaat leren.</span></div>
+          <div class="tp"><span>Sta elk uur even op en beweeg een minuutje.</span></div>
+          <div class="gw"><button class="go" data-go="stretch">Open Rekken</button></div>
+        </details>
+
+        <details class="tip">
+          <summary><i class="dd dd-mind"></i>Mentaal welbevinden</summary>
+          <p class="asp">Concentreren, vrolijk zijn, jezelf accepteren, omgaan met verandering en meer</p>
+          <div class="tp"><span>Schrijf 2 minuten alles op wat je dwarszit en kies er één ding uit.</span></div>
+          <div class="tp"><span>Doe de 5-4-3-2-1 oefening: 5 dingen die je ziet, 4 die je voelt, 3 die je hoort, 2 die je ruikt, 1 die je proeft.</span></div>
+          <div class="tp"><span>Adem drie keer rustig in en uit.</span></div>
+          <div class="gw"><button class="go" data-go="breathe">Open Ademhaling</button></div>
+        </details>
+
+        <details class="tip">
+          <summary><i class="dd dd-meaning"></i>Zingeving</summary>
+          <p class="asp">Zinvol leven, vertrouwen, dankbaarheid, blijven leren en meer</p>
+          <div class="tp"><span>Schrijf één ding op waar je dankbaar voor bent.</span></div>
+          <div class="tp"><span>Vraag jezelf af waarom dit vak of deze taak ertoe doet voor jou.</span></div>
+          <div class="tp"><span>Leer iets kleins puur voor de lol.</span></div>
+          <div class="tp"><span>Neem even een rustmoment.</span></div>
+          <div class="gw"><button class="go" data-go="med">Open Mediteren</button></div>
+        </details>
+
+        <details class="tip">
+          <summary><i class="dd dd-life"></i>Kwaliteit van leven</summary>
+          <p class="asp">Genieten, gelukkig zijn, balans, je veilig voelen en meer</p>
+          <div class="tp"><span>Plan elke dag iets kleins waar je van geniet.</span></div>
+          <div class="tp"><span>Zoek een rustige plek om te leren of te ontspannen.</span></div>
+          <div class="tp"><span>Zorg voor balans tussen school, vrienden en tijd voor jezelf.</span></div>
+          <div class="gw"><button class="go" data-go="sounds">Open Geluiden</button></div>
+        </details>
+
+        <details class="tip">
+          <summary><i class="dd dd-social"></i>Meedoen</summary>
+          <p class="asp">Sociale contacten, erbij horen, steun van anderen en meer</p>
+          <div class="tp"><span>Stuur een vriend of klasgenoot een berichtje.</span></div>
+          <div class="tp"><span>Doe af en toe iets leuks samen, zoals een wandeling of samen leren.</span></div>
+          <div class="tp"><span>Zoek een groep of club waar je bij hoort.</span></div>
+        </details>
+
+        <details class="tip">
+          <summary><i class="dd dd-daily"></i>Dagelijks functioneren</summary>
+          <p class="asp">Zorgen voor jezelf, je grenzen kennen, omgaan met tijd, hulp vragen en meer</p>
+          <div class="tp"><span>Maak de taak kleiner: kies de kleinste volgende stap en doe die 10 minuten.</span></div>
+          <div class="tp"><span>Plan je week en schrijf de deadlines op.</span></div>
+          <div class="tp"><span>Vraag hulp bij een mentor, docent of schoolcoach. Daar zijn ze voor.</span></div>
+        </details>
+
+        <p class="note">Heb je meer hulp nodig? Praat met een docent of maak een afspraak met je SLB'er.</p>
+      </section>
+
+      <!-- Rekken -->
+      <section class="screen" id="s-stretch">
+        <div class="hd">
+          <div>
+            <h1>Rekken</h1>
+            <p class="sub">Veel gezeten? Beweeg een minuutje.</p>
+          </div>
+          <img class="mini" src="images/mossy-stretch.png" alt="">
+        </div>
+        <div class="chips pick" id="stLen">
+          <button class="chip on" data-v="q">Kort · 1 min</button>
+          <button class="chip" data-v="f">Volledig · 3 min</button>
+        </div>
+        <div class="stage stretch-stage">
+          <div id="stEmoji">🤸</div>
+          <div id="stName">Klaar?</div>
+          <p id="stText" class="sub">Kies een duur en druk op start.</p>
+          <div class="dots" id="stDots"></div>
+          <div class="bar"><i id="stBar"></i></div>
+          <div id="stClock"></div>
+        </div>
+        <button class="primary" id="stBtn">Start</button>
+      </section>
+
+    </main>
+
+    <nav id="nav">
+      <button class="on" data-t="breathe"><i>🌬️</i>Ademhaling</button>
+      <button data-t="sounds"><i>🌧️</i>Geluiden</button>
+      <button data-t="med"><i>🧘</i>Mediteren</button>
+      <button data-t="tips"><i>🌱</i>Tips</button>
+      <button data-t="stretch"><i>🤸</i>Rekken</button>
+    </nav>
+  </div>
+
+</body>
+</html>
