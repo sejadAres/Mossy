@@ -392,16 +392,16 @@ $('#stBtn').onclick = () => {
 
 /* ===== Loslaten: zorgen wegblazen ===== */
 // Hoe het werkt:
-// - De zorg wordt opgedeeld in woordjes (zaadjes van een paardenbloem).
+// - Elke zorg (gescheiden door komma's) wordt een bolletje van de paardenbloem.
 // - Via de microfoon meten we hoe hard het geluid is. Blazen = veel ruis = hoog volume.
 // - Alleen LANG en RUSTIG blazen telt: pas na 0,6 seconde aan één stuk doorblazen
 //   gaan de woordjes vliegen. Een kort, hard pufje laat ze alleen wiebelen.
-// - In totaal is ongeveer 3,5 seconde blazen nodig. Dat is één lange uitademing.
+// - Per bolletje is ongeveer 0,7 seconde blazen nodig (max. 3 seconden in totaal).
 // - Er wordt niets opgenomen of opgeslagen.
 
-const BW_TOTAL = 3.5;     // seconden blazen voor de hele zorg
-const BW_MIN_STREAK = 0.6; // zo lang moet je eerst doorblazen voordat er iets wegvliegt
-const BW_MAX_SEEDS = 10;   // maximaal aantal zaadjes
+const BW_PER_SEED = 0.7;   // seconden blazen per bolletje (min. 1,5 s, max. 3 s in totaal)
+const BW_MIN_STREAK = 0.35; // zo lang moet je eerst doorblazen voordat er iets wegvliegt
+const BW_MAX_SEEDS = 6;    // maximaal aantal zorgen
 
 const bw = {
   step: 1, seeds: [], removed: 0, power: 0, streak: 0, lvl: 0, thr: 0.05,
@@ -422,23 +422,24 @@ function setBwStep(n) {
   });
 }
 
-// Tekst in woordjes knippen (lange zinnen worden samengevoegd tot max. 10 zaadjes)
+// Tekst splitsen op komma's: elke zorg wordt een bolletje (max. 6, max. 30 tekens)
+function splitWorries(text) {
+  return text.split(/[,;\n]/).map(s => s.trim()).filter(Boolean)
+             .slice(0, BW_MAX_SEEDS).map(s => s.length > 30 ? s.slice(0, 29) + '…' : s);
+}
+
+function seedEl(text) {
+  const s = document.createElement('span');
+  s.className = 'seed';
+  s.textContent = text;        // textContent: veilig, geen HTML
+  return s;
+}
+
 function makeSeeds(text) {
-  const words = text.trim().split(/\s+/);
-  const n = Math.min(words.length, BW_MAX_SEEDS);
-  const per = Math.ceil(words.length / n);
-  const parts = [];
-  for (let i = 0; i < words.length; i += per) parts.push(words.slice(i, i + per).join(' '));
   const cloud = $('#cloud');
   cloud.innerHTML = '';
   cloud.classList.remove('empty');
-  bw.seeds = parts.map(p => {
-    const s = document.createElement('span');
-    s.className = 'seed';
-    s.textContent = p;          // textContent: veilig, geen HTML
-    cloud.appendChild(s);
-    return s;
-  });
+  bw.seeds = splitWorries(text).map(p => cloud.appendChild(seedEl(p)));
   shuffle(bw.seeds);            // willekeurige volgorde van wegvliegen
 }
 
@@ -505,7 +506,7 @@ function bwLoop(ts) {
   if (bw.calibN) {
     // drempel boven het gemiddelde én boven de hardste piek in de ruimte (praten, piepjes)
     const base = bw.calibSum / bw.calibN;
-    bw.thr = Math.min(0.3, Math.max(0.035, base * 4, bw.calibMax * 1.5));
+    bw.thr = Math.min(0.15, Math.max(0.012, base * 2.5, bw.calibMax * 1.15));
     bw.calibN = 0;
     bwMsg('Adem diep in door je neus… en blaas dan langzaam in de microfoon.');
   }
@@ -528,7 +529,8 @@ function bwLoop(ts) {
 
   // woordjes laten wegvliegen
   const n = bw.seeds.length;
-  const needed = Math.min(n, Math.floor(bw.power / (BW_TOTAL / n)));
+  const total = Math.min(3, Math.max(1.5, n * BW_PER_SEED));
+  const needed = Math.min(n, Math.floor(bw.power / (total / n)));
   while (bw.removed < needed) flyAway(bw.seeds[bw.removed++]);
   $('#bwCount').textContent = bw.removed + ' van ' + n + ' weggeblazen';
 
@@ -549,14 +551,21 @@ function bwLoop(ts) {
 }
 
 // Stap 1 → 2
-$('#worry').oninput = e => {
-  $('#worryCount').textContent = e.target.value.length;
-  $('#toBlow').disabled = !e.target.value.trim();
-};
+function updatePreview() {
+  const list = splitWorries($('#worry').value);
+  const prev = $('#worryPreview');
+  prev.innerHTML = '';
+  if (list.length) list.forEach(w => prev.appendChild(seedEl(w)));
+  else prev.innerHTML = '<span class="ph">Je bolletjes verschijnen hier.</span>';
+  $('#worryCount').textContent = list.length + ' van max. ' + BW_MAX_SEEDS;
+  $('#toBlow').disabled = list.length === 0;
+}
+$('#worry').oninput = updatePreview;
+$('#worry').onkeydown = e => { if (e.key === 'Enter' && !$('#toBlow').disabled) $('#toBlow').click(); };
 
 $('#toBlow').onclick = () => {
-  const text = $('#worry').value.trim();
-  if (!text) return;
+  const text = $('#worry').value;
+  if (!splitWorries(text).length) return;
   Object.assign(bw, { removed: 0, power: 0, streak: 0, lvl: 0, thr: 0.05, done: false,
                       wasBlowing: false, last: 0, calibSum: 0, calibN: 0, calibMax: 0, calibUntil: 0 });
   makeSeeds(text);
@@ -583,8 +592,7 @@ $('#bwBack').onclick = () => { stopMic(); setBwStep(1); $('#worry').focus(); };
 // Nog een keer
 $('#bwAgain').onclick = () => {
   $('#worry').value = '';
-  $('#worryCount').textContent = '0';
-  $('#toBlow').disabled = true;
+  updatePreview();
   setBwStep(1);
   $('#worry').focus();
 };
@@ -595,5 +603,6 @@ function bwLeave() {
 }
 
 /* ===== Start ===== */
+updatePreview();
 stReset();
 reset();

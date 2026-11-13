@@ -156,6 +156,7 @@ input[type=range] { width: 100%; accent-color: var(--accent); margin: 8px 0 16px
 
 #worry {
   width: 100%;
+  height: 50px;
   font: inherit;
   font-size: 16px;               /* 16px voorkomt inzoomen op iPhone */
   color: var(--text);
@@ -163,10 +164,13 @@ input[type=range] { width: 100%; accent-color: var(--accent); margin: 8px 0 16px
   border: 1.5px solid var(--ring);
   border-radius: 14px;
   padding: 12px 14px;
-  resize: none;
 }
 #worry:focus { outline: none; border-color: var(--accent); }
-.count { align-self: flex-end; font-size: 12px; color: var(--muted); margin: 4px 2px 8px; }
+.hint { align-self: flex-start; font-size: 13px; color: var(--muted); margin: 6px 2px 10px; line-height: 1.4; }
+.preview { width: 100%; min-height: 40px; display: flex; flex-wrap: wrap; gap: 6px; }
+.preview .seed { animation: pop .25s ease-out; }
+.preview .ph { font-size: 13px; color: var(--muted); font-style: italic; padding: 6px 2px; }
+.count { align-self: flex-end; font-size: 12px; color: var(--muted); margin: 6px 2px 10px; }
 .privacy { align-self: flex-start; font-size: 13px; color: var(--muted); margin: 0 0 6px; line-height: 1.4; }
 #bwWrite .primary { margin-top: auto; }
 .primary:disabled { opacity: .4; cursor: default; }
@@ -204,9 +208,13 @@ input[type=range] { width: 100%; accent-color: var(--accent); margin: 8px 0 16px
   border: 1px solid var(--ring);
   color: var(--navy);
   border-radius: 999px;
-  padding: 4px 10px;
+  padding: 6px 12px;
   font-size: 14px;
   font-weight: 500;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   box-shadow: 0 1px 4px #1B455B1a;
   transition: transform 2.4s cubic-bezier(.2, .6, .3, 1), opacity 2.4s ease-in;
 }

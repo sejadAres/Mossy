@@ -55,9 +55,12 @@
 
         <!-- Stap 1: opschrijven -->
         <div class="bw-step" id="bwWrite">
-          <label class="lbl" for="worry">Wat zit je dwars?</label>
-          <textarea id="worry" maxlength="90" rows="3" placeholder="Bijvoorbeeld: ik ben bang dat ik mijn toets niet haal"></textarea>
-          <div class="count"><span id="worryCount">0</span>/90</div>
+          <label class="lbl" for="worry">Wat zit je dwars? Schrijf het in een paar woorden.</label>
+          <input type="text" id="worry" maxlength="150" autocomplete="off"
+                 placeholder="toets, ruzie met Sam, moe">
+          <p class="hint">Zet een <b>komma</b> tussen je zorgen. Elke zorg wordt een eigen bolletje.</p>
+          <div class="preview" id="worryPreview" aria-live="polite"></div>
+          <div class="count" id="worryCount">0 van max. 6</div>
           <p class="privacy">🔒 Dit wordt nergens opgeslagen. Alleen jij ziet het.</p>
           <p class="privacy">🎤 Zo vraagt je browser om je microfoon. Mossy luistert alleen of je blaast en neemt niets op.</p>
           <button class="primary" id="toBlow" disabled>Verder naar wegblazen</button>
