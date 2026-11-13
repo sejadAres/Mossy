@@ -37,6 +37,56 @@
         <button class="primary" id="bBtn">Start</button>
       </section>
 
+      <!-- Loslaten: zorgen wegblazen -->
+      <section class="screen" id="s-blow">
+        <div class="hd">
+          <div>
+            <h1>Loslaten</h1>
+            <p class="sub">Schrijf op wat je dwarszit. Blaas het daarna weg.</p>
+          </div>
+          <img class="mini" src="images/mossy.png" alt="">
+        </div>
+
+        <ol class="steps" id="bwSteps" aria-label="Stappen">
+          <li class="on">1 · Opschrijven</li>
+          <li>2 · Wegblazen</li>
+          <li>3 · Klaar</li>
+        </ol>
+
+        <!-- Stap 1: opschrijven -->
+        <div class="bw-step" id="bwWrite">
+          <label class="lbl" for="worry">Wat zit je dwars?</label>
+          <textarea id="worry" maxlength="90" rows="3" placeholder="Bijvoorbeeld: ik ben bang dat ik mijn toets niet haal"></textarea>
+          <div class="count"><span id="worryCount">0</span>/90</div>
+          <p class="privacy">🔒 Dit wordt nergens opgeslagen. Alleen jij ziet het.</p>
+          <p class="privacy">🎤 Zo vraagt je browser om je microfoon. Mossy luistert alleen of je blaast en neemt niets op.</p>
+          <button class="primary" id="toBlow" disabled>Verder naar wegblazen</button>
+        </div>
+
+        <!-- Stap 2: wegblazen -->
+        <div class="bw-step" id="bwBlow" hidden>
+          <div class="field">
+            <div class="cloud" id="cloud"></div>
+            <div class="stem"></div>
+            <img class="bw-mossy" src="images/mossy.png" alt="">
+          </div>
+          <p class="bw-msg" id="bwMsg" aria-live="polite"></p>
+          <div class="meter" aria-hidden="true"><i id="meterFill"></i><b></b></div>
+          <div class="meter-lbl"><span>Blaaskracht</span><span id="bwCount"></span></div>
+          <button class="hold" id="holdBtn">Geen microfoon of te druk? <b>Houd hier ingedrukt</b> en adem langzaam uit</button>
+          <button class="sec bw-back" id="bwBack">← Tekst aanpassen</button>
+        </div>
+
+        <!-- Stap 3: klaar -->
+        <div class="bw-step bw-done" id="bwDone" hidden>
+          <img src="images/mossy-stretch.png" alt="Mossy steekt blij zijn armen omhoog">
+          <h2>Weggeblazen 🍃</h2>
+          <p>Goed gedaan. Je zorg is misschien niet helemaal weg, maar je hoeft hem nu even niet vast te houden.</p>
+          <button class="primary" id="bwAgain">Nog iets wegblazen</button>
+          <p class="note">Blijft het je dwarszitten? Praat erover met je mentor of SLB'er.</p>
+        </div>
+      </section>
+
       <!-- Geluiden -->
       <section class="screen" id="s-sounds">
         <div class="hd">
@@ -122,7 +172,7 @@
           <div class="tp"><span>Schrijf 2 minuten alles op wat je dwarszit en kies er één ding uit.</span></div>
           <div class="tp"><span>Doe de 5-4-3-2-1 oefening: 5 dingen die je ziet, 4 die je voelt, 3 die je hoort, 2 die je ruikt, 1 die je proeft.</span></div>
           <div class="tp"><span>Adem drie keer rustig in en uit.</span></div>
-          <div class="gw"><button class="go" data-go="breathe">Open Ademhaling</button></div>
+          <div class="gw"><button class="go" data-go="breathe">Open Ademhaling</button> <button class="go" data-go="blow">Open Loslaten</button></div>
         </details>
 
         <details class="tip">
@@ -191,6 +241,7 @@
 
     <nav id="nav">
       <button class="on" data-t="breathe"><i>🌬️</i>Ademhaling</button>
+      <button data-t="blow"><i>🍃</i>Loslaten</button>
       <button data-t="sounds"><i>🌧️</i>Geluiden</button>
       <button data-t="med"><i>🧘</i>Mediteren</button>
       <button data-t="tips"><i>🌱</i>Tips</button>

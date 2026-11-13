@@ -10,6 +10,7 @@ $('#go').onclick = () => {
 
 /* ===== Tabs ===== */
 function go(t) {
+  if (t !== 'blow') bwLeave();   // microfoon uit als je de Loslaten-tab verlaat
   $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.t === t));
   $$('.screen').forEach(s => s.classList.toggle('on', s.id === 's-' + t));
   $('main').scrollTop = 0;
@@ -388,6 +389,210 @@ $('#stBtn').onclick = () => {
   }, 1000);
   stShow(); // na setInterval, zodat het eerste bolletje meteen oplicht
 };
+
+/* ===== Loslaten: zorgen wegblazen ===== */
+// Hoe het werkt:
+// - De zorg wordt opgedeeld in woordjes (zaadjes van een paardenbloem).
+// - Via de microfoon meten we hoe hard het geluid is. Blazen = veel ruis = hoog volume.
+// - Alleen LANG en RUSTIG blazen telt: pas na 0,6 seconde aan één stuk doorblazen
+//   gaan de woordjes vliegen. Een kort, hard pufje laat ze alleen wiebelen.
+// - In totaal is ongeveer 3,5 seconde blazen nodig. Dat is één lange uitademing.
+// - Er wordt niets opgenomen of opgeslagen.
+
+const BW_TOTAL = 3.5;     // seconden blazen voor de hele zorg
+const BW_MIN_STREAK = 0.6; // zo lang moet je eerst doorblazen voordat er iets wegvliegt
+const BW_MAX_SEEDS = 10;   // maximaal aantal zaadjes
+
+const bw = {
+  step: 1, seeds: [], removed: 0, power: 0, streak: 0, lvl: 0, thr: 0.05,
+  calibUntil: 0, calibSum: 0, calibN: 0, calibMax: 0, holding: false, done: false,
+  stream: null, ac: null, an: null, buf: null, raf: 0, last: 0, wasBlowing: false, mode: 'mic'
+};
+
+const bwMsg = t => { $('#bwMsg').textContent = t; };
+
+function setBwStep(n) {
+  bw.step = n;
+  $('#bwWrite').hidden = n !== 1;
+  $('#bwBlow').hidden = n !== 2;
+  $('#bwDone').hidden = n !== 3;
+  $$('#bwSteps li').forEach((li, i) => {
+    li.classList.toggle('on', i === n - 1);
+    li.classList.toggle('done', i < n - 1);
+  });
+}
+
+// Tekst in woordjes knippen (lange zinnen worden samengevoegd tot max. 10 zaadjes)
+function makeSeeds(text) {
+  const words = text.trim().split(/\s+/);
+  const n = Math.min(words.length, BW_MAX_SEEDS);
+  const per = Math.ceil(words.length / n);
+  const parts = [];
+  for (let i = 0; i < words.length; i += per) parts.push(words.slice(i, i + per).join(' '));
+  const cloud = $('#cloud');
+  cloud.innerHTML = '';
+  cloud.classList.remove('empty');
+  bw.seeds = parts.map(p => {
+    const s = document.createElement('span');
+    s.className = 'seed';
+    s.textContent = p;          // textContent: veilig, geen HTML
+    cloud.appendChild(s);
+    return s;
+  });
+  shuffle(bw.seeds);            // willekeurige volgorde van wegvliegen
+}
+
+function flyAway(el) {
+  el.style.setProperty('--dx', (140 + Math.random() * 140) + 'px');
+  el.style.setProperty('--dy', -(70 + Math.random() * 170) + 'px');
+  el.style.setProperty('--r', (Math.random() * 90 - 45) + 'deg');
+  el.classList.add('gone');
+}
+
+async function startMic() {
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('geen microfoon-API');
+    // ruisonderdrukking UIT, anders filtert de browser het blaasgeluid juist weg
+    bw.stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+    });
+    if (bw.step !== 2) { stopMic(); return; } // gebruiker is al weg
+    bw.ac = new (window.AudioContext || window.webkitAudioContext)();
+    await bw.ac.resume();
+    const src = bw.ac.createMediaStreamSource(bw.stream);
+    bw.an = bw.ac.createAnalyser();
+    bw.an.fftSize = 1024;
+    src.connect(bw.an);
+    bw.buf = new Float32Array(bw.an.fftSize);
+    bw.mode = 'mic';
+    bw.calibUntil = performance.now() + 900;   // eerst even meten hoe stil het is
+  } catch (e) {
+    bw.mode = 'hold';
+    $('#holdBtn').classList.add('focus');
+    bwMsg('Geen microfoon gevonden of geen toestemming. Houd de knop hieronder ingedrukt en adem langzaam uit.');
+  }
+}
+
+function stopMic() {
+  cancelAnimationFrame(bw.raf);
+  if (bw.stream) bw.stream.getTracks().forEach(t => t.stop());
+  if (bw.ac) bw.ac.close();
+  bw.stream = bw.ac = bw.an = null;
+  bw.holding = false;
+  $('#holdBtn').classList.remove('active');
+}
+
+function micLevel() {
+  if (!bw.an) return 0;
+  bw.an.getFloatTimeDomainData(bw.buf);
+  let sum = 0;
+  for (let i = 0; i < bw.buf.length; i++) sum += bw.buf[i] * bw.buf[i];
+  return Math.sqrt(sum / bw.buf.length);
+}
+
+function bwLoop(ts) {
+  const dt = Math.min(0.05, (ts - (bw.last || ts)) / 1000);
+  bw.last = ts;
+  const raw = micLevel();
+
+  // Kalibreren: hoe luid is het in de ruimte als je níet blaast?
+  if (bw.mode === 'mic' && ts < bw.calibUntil && !bw.holding) {
+    bw.calibSum += raw; bw.calibN++; bw.calibMax = Math.max(bw.calibMax, raw);
+    bwMsg('Even stil… Mossy luistert naar de ruimte.');
+    bw.raf = requestAnimationFrame(bwLoop);
+    return;
+  }
+  if (bw.calibN) {
+    // drempel boven het gemiddelde én boven de hardste piek in de ruimte (praten, piepjes)
+    const base = bw.calibSum / bw.calibN;
+    bw.thr = Math.min(0.3, Math.max(0.035, base * 4, bw.calibMax * 1.5));
+    bw.calibN = 0;
+    bwMsg('Adem diep in door je neus… en blaas dan langzaam in de microfoon.');
+  }
+
+  const level = bw.holding ? bw.thr * 1.6 : raw;
+  bw.lvl = bw.lvl * 0.75 + level * 0.25;      // gladstrijken
+  const blowing = !bw.done && (bw.holding || bw.lvl > bw.thr);
+
+  if (blowing) {
+    bw.streak += dt;
+    if (bw.streak > BW_MIN_STREAK) bw.power += dt;
+    bwMsg(bw.streak > BW_MIN_STREAK ? 'Goed zo, blijf rustig doorblazen…' : 'Blijf blazen…');
+  } else if (bw.wasBlowing && !bw.done) {
+    if (bw.streak > 0.15) bwMsg(bw.streak < BW_MIN_STREAK
+      ? 'Iets langer! Blaas niet hard, maar langzaam en lang.'
+      : 'Adem weer in… en blaas verder.');
+    bw.streak = 0;
+  }
+  bw.wasBlowing = blowing;
+
+  // woordjes laten wegvliegen
+  const n = bw.seeds.length;
+  const needed = Math.min(n, Math.floor(bw.power / (BW_TOTAL / n)));
+  while (bw.removed < needed) flyAway(bw.seeds[bw.removed++]);
+  $('#bwCount').textContent = bw.removed + ' van ' + n + ' weggeblazen';
+
+  // meter en wiebelen
+  const fill = $('#meterFill');
+  fill.style.width = Math.min(100, (bw.lvl / bw.thr) * 50) + '%';
+  fill.classList.toggle('ok', blowing);
+  const wob = Math.min(6, (bw.lvl / bw.thr) * 3) * Math.sin(ts / 60);
+  $('#cloud').style.transform = 'translateX(-50%) rotate(' + (bw.done ? 0 : wob) + 'deg)';
+
+  if (bw.removed === n && !bw.done) {
+    bw.done = true;
+    $('#cloud').classList.add('empty');
+    bwMsg('Alles is weggeblazen… adem rustig uit.');
+    setTimeout(() => { stopMic(); setBwStep(3); }, 2200);
+  }
+  bw.raf = requestAnimationFrame(bwLoop);
+}
+
+// Stap 1 → 2
+$('#worry').oninput = e => {
+  $('#worryCount').textContent = e.target.value.length;
+  $('#toBlow').disabled = !e.target.value.trim();
+};
+
+$('#toBlow').onclick = () => {
+  const text = $('#worry').value.trim();
+  if (!text) return;
+  Object.assign(bw, { removed: 0, power: 0, streak: 0, lvl: 0, thr: 0.05, done: false,
+                      wasBlowing: false, last: 0, calibSum: 0, calibN: 0, calibMax: 0, calibUntil: 0 });
+  makeSeeds(text);
+  $('#holdBtn').classList.remove('focus');
+  setBwStep(2);
+  bwMsg('Microfoon aanzetten…');
+  startMic();                       // direct na de klik: nodig voor iPhone/Safari
+  bw.raf = requestAnimationFrame(bwLoop);
+};
+
+// Vasthoud-knop (als er geen microfoon is, of als het te druk is)
+const hold = $('#holdBtn');
+const holdOn = () => { bw.holding = true; hold.classList.add('active'); };
+const holdOff = () => { bw.holding = false; hold.classList.remove('active'); };
+hold.addEventListener('pointerdown', e => { hold.setPointerCapture(e.pointerId); holdOn(); });
+['pointerup', 'pointercancel'].forEach(ev => hold.addEventListener(ev, holdOff));
+hold.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); holdOn(); } });
+hold.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') holdOff(); });
+hold.addEventListener('contextmenu', e => e.preventDefault());
+
+// Terug naar tekst
+$('#bwBack').onclick = () => { stopMic(); setBwStep(1); $('#worry').focus(); };
+
+// Nog een keer
+$('#bwAgain').onclick = () => {
+  $('#worry').value = '';
+  $('#worryCount').textContent = '0';
+  $('#toBlow').disabled = true;
+  setBwStep(1);
+  $('#worry').focus();
+};
+
+// Tab verlaten midden in het blazen: microfoon uit, terug naar stap 1 (tekst blijft staan)
+function bwLeave() {
+  if (bw.step === 2) { stopMic(); setBwStep(1); }
+}
 
 /* ===== Start ===== */
 stReset();

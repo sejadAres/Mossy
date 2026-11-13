@@ -137,6 +137,122 @@ input[type=range] { width: 100%; accent-color: var(--accent); margin: 8px 0 16px
 
 #phase { position: absolute; font-size: 18px; font-weight: 500; color: var(--navy); pointer-events: none; }
 
+/* ===== Loslaten (zorgen wegblazen) ===== */
+.steps { list-style: none; display: flex; gap: 6px; padding: 0; margin: 0 0 16px; width: 100%; }
+.steps li {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  padding: 6px 4px;
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--muted);
+}
+.steps li.on { background: var(--navy); color: #fff; font-weight: 600; }
+.steps li.done { color: var(--accent); font-weight: 600; }
+
+.bw-step { width: 100%; display: flex; flex-direction: column; align-items: center; flex: 1; }
+.bw-step[hidden] { display: none; }
+
+#worry {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;               /* 16px voorkomt inzoomen op iPhone */
+  color: var(--text);
+  background: #fff;
+  border: 1.5px solid var(--ring);
+  border-radius: 14px;
+  padding: 12px 14px;
+  resize: none;
+}
+#worry:focus { outline: none; border-color: var(--accent); }
+.count { align-self: flex-end; font-size: 12px; color: var(--muted); margin: 4px 2px 8px; }
+.privacy { align-self: flex-start; font-size: 13px; color: var(--muted); margin: 0 0 6px; line-height: 1.4; }
+#bwWrite .primary { margin-top: auto; }
+.primary:disabled { opacity: .4; cursor: default; }
+
+/* het veld met de paardenbloem */
+.field { position: relative; width: 100%; height: 280px; overflow: visible; }
+.cloud {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 250px;
+  min-height: 170px;
+  padding: 26px 22px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  gap: 6px;
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  z-index: 2;
+}
+.cloud::before {                 /* het pluizige bolletje achter de woorden */
+  content: "";
+  position: absolute;
+  inset: -6px 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, #e2f2cb 58%, #e2f2cb00 72%);
+  z-index: -1;
+  transition: opacity 1s;
+}
+.cloud.empty::before { opacity: .35; }
+.seed {
+  background: #fff;
+  border: 1px solid var(--ring);
+  color: var(--navy);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 1px 4px #1B455B1a;
+  transition: transform 2.4s cubic-bezier(.2, .6, .3, 1), opacity 2.4s ease-in;
+}
+.seed.gone { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); opacity: 0; }
+.stem {
+  position: absolute;
+  left: calc(50% - 2px);
+  top: 170px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 4px;
+  background: var(--accent);
+}
+.bw-mossy { position: absolute; left: 0; bottom: 0; width: 92px; }
+
+.bw-msg { min-height: 42px; margin: 4px 0 8px; font-size: 16px; font-weight: 500; text-align: center; color: var(--navy); line-height: 1.35; }
+
+.meter { position: relative; width: 100%; height: 10px; border-radius: 99px; background: var(--ring); overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: var(--muted); border-radius: 99px; transition: width .08s linear, background .2s; }
+.meter i.ok { background: var(--accent); }
+.meter b { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--navy); opacity: .5; }
+.meter-lbl { width: 100%; display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin: 4px 0 14px; }
+
+.hold {
+  width: 100%;
+  background: var(--card);
+  border: 1.5px dashed var(--accent);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--navy);
+  line-height: 1.35;
+  -webkit-touch-callout: none;
+  touch-action: none;
+}
+.hold.focus { border-style: solid; border-width: 2px; }
+.hold.active { background: var(--lime); }
+.bw-back { margin: 12px 0 8px; }
+
+.bw-done { justify-content: center; text-align: center; }
+.bw-done img { width: 170px; }
+.bw-done h2 { font-size: 26px; margin: 8px 0 6px; }
+.bw-done p { color: var(--muted); max-width: 320px; line-height: 1.45; margin: 0 0 20px; }
+.bw-done .primary { margin-top: 0; }
+.bw-done .note { text-align: center; }
+
 /* ===== Geluiden ===== */
 #list { width: 100%; }
 
@@ -350,6 +466,9 @@ nav button.on i { background: var(--lime); border-radius: 999px; padding: 2px 16
 #app.night .go { background: var(--lime); color: #1B455B; }
 #app.night .gen, #app.night .tag { background: #ffffff14; color: var(--text); }
 #app.night .plus, #app.night .ctl, #app.night .sec { color: var(--text); }
+#app.night #worry { background: #ffffff14; }
+#app.night .bw-msg, #app.night .hold { color: var(--text); }
+#app.night .steps li.on { background: var(--lime); color: #1B455B; }
 
 /* ===== Minder beweging ===== */
 @media (prefers-reduced-motion: reduce) {
@@ -357,4 +476,5 @@ nav button.on i { background: var(--lime); border-radius: 999px; padding: 2px 16
   .topic.pop,
   .gen.go-spin .spin { animation: none; }
   #s-med.is-paused #time { animation: none; opacity: .5; }
+  .seed.gone { transform: none; }   /* woordjes vervagen alleen, zonder weg te vliegen */
 }
