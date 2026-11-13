@@ -176,7 +176,8 @@ input[type=range] { width: 100%; accent-color: var(--accent); margin: 8px 0 16px
 .primary:disabled { opacity: .4; cursor: default; }
 
 /* het veld met de paardenbloem */
-.field { position: relative; width: 100%; height: 280px; overflow: visible; }
+/* het veld groeit mee met de schermhoogte, zodat er geen groot gat onderaan komt */
+.field { position: relative; width: 100%; flex: 1 1 auto; min-height: 270px; max-height: 330px; overflow: visible; }
 .cloud {
   position: absolute;
   top: 8px;
@@ -228,7 +229,6 @@ input[type=range] { width: 100%; accent-color: var(--accent); margin: 8px 0 16px
   border-radius: 4px;
   background: var(--accent);
 }
-.bw-mossy { position: absolute; left: 0; bottom: 0; width: 92px; }
 
 .bw-msg { min-height: 42px; margin: 4px 0 8px; font-size: 16px; font-weight: 500; text-align: center; color: var(--navy); line-height: 1.35; }
 
@@ -236,23 +236,35 @@ input[type=range] { width: 100%; accent-color: var(--accent); margin: 8px 0 16px
 .meter i { display: block; height: 100%; width: 0; background: var(--muted); border-radius: 99px; transition: width .08s linear, background .2s; }
 .meter i.ok { background: var(--accent); }
 .meter b { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--navy); opacity: .5; }
-.meter-lbl { width: 100%; display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin: 4px 0 14px; }
+.meter-lbl { width: 100%; display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin: 4px 0 6px; }
 
 .hold {
-  width: 100%;
+  position: absolute;
+  right: 0;
+  top: 178px;                    /* vlak onder het bolletje, naast de steel */
+  width: 104px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
   background: var(--card);
   border: 1.5px dashed var(--accent);
-  border-radius: 14px;
-  padding: 12px 14px;
-  font-size: 14px;
+  border-radius: 16px;
+  padding: 8px 6px;
   color: var(--navy);
-  line-height: 1.35;
+  line-height: 1.2;
   -webkit-touch-callout: none;
   touch-action: none;
+  z-index: 3;
 }
-.hold.focus { border-style: solid; border-width: 2px; }
-.hold.active { background: var(--lime); }
+.hold-ic { font-size: 22px; }
+.hold-small { font-size: 11px; color: var(--muted); }
+.hold b { font-size: 13px; }
+.hold.focus { border-style: solid; border-width: 2px; animation: nudge 1.6s ease-in-out infinite; }
+.hold.active { background: var(--lime); animation: none; }
+@keyframes nudge { 50% { box-shadow: 0 0 0 6px #96cc4b55; } }
 .bw-back { margin: 12px 0 8px; }
+#bwBlow { justify-content: center; }
 
 .bw-done { justify-content: center; text-align: center; }
 .bw-done img { width: 170px; }
@@ -476,6 +488,7 @@ nav button.on i { background: var(--lime); border-radius: 999px; padding: 2px 16
 #app.night .plus, #app.night .ctl, #app.night .sec { color: var(--text); }
 #app.night #worry { background: #ffffff14; }
 #app.night .bw-msg, #app.night .hold { color: var(--text); }
+#app.night .hold.active { color: #1B455B; }
 #app.night .steps li.on { background: var(--lime); color: #1B455B; }
 
 /* ===== Minder beweging ===== */
@@ -484,5 +497,6 @@ nav button.on i { background: var(--lime); border-radius: 999px; padding: 2px 16
   .topic.pop,
   .gen.go-spin .spin { animation: none; }
   #s-med.is-paused #time { animation: none; opacity: .5; }
-  .seed.gone { transform: none; }   /* woordjes vervagen alleen, zonder weg te vliegen */
+  .seed.gone { transform: none; }
+  .hold.focus { animation: none; }   /* woordjes vervagen alleen, zonder weg te vliegen */
 }
