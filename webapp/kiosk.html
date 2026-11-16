@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>Healthy Hub · Kiosk</title>
+  <link rel="stylesheet" href="css/mossy.css">
+  <link rel="stylesheet" href="css/kiosk.css">
+  <script src="config.js" defer></script>
+  <script src="js/qr.js" defer></script>
+  <script src="js/kiosk.js" defer></script>
+</head>
+<body class="kiosk">
+
+  <header class="kiosk-kop">
+    <img src="images/mossy.png" alt="">
+    <div>
+      <p class="kiosk-merk">Healthy Hub · De Haagse Hogeschool</p>
+      <h1 id="kioskTitel" tabindex="-1">Welkom bij Mossy</h1>
+    </div>
+  </header>
+
+  <!-- 1. Introductievideo -->
+  <section id="vIntro" class="kiosk-vak">
+    <p class="lead">Bekijk de korte introductie over de Healthy Hub en Positieve Gezondheid.</p>
+    <div class="video-vak">
+      <video id="video" playsinline preload="metadata"></video>
+      <iframe id="introFrame" title="Introductievideo Healthy Hub" hidden></iframe>
+      <button type="button" class="knop primair groot speel" id="bSpeel">▶ Speel introductie af</button>
+    </div>
+    <div class="video-bediening" id="bediening" hidden>
+      <div class="tijdbalk" aria-hidden="true"><i id="tijdbalk"></i></div>
+      <div class="acties rij">
+        <button type="button" class="knop primair groot" id="bPauze">❚❚ Pauzeer</button>
+        <button type="button" class="knop groot" id="bOpnieuw">↺ Opnieuw</button>
+        <button type="button" class="knop groot" id="bOverslaan">Sla over →</button>
+      </div>
+    </div>
+    <div class="kaart fout" id="fout" role="alert" hidden>
+      <h2>De video kan nu niet worden afgespeeld</h2>
+      <p>Probeer het opnieuw, of ga verder zonder video.</p>
+      <div class="acties rij">
+        <button type="button" class="knop primair groot" id="bProbeerOpnieuw">Probeer opnieuw</button>
+        <button type="button" class="knop groot" id="bGaVerder">Ga verder</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Overstap naar iPad of telefoon -->
+  <section id="vOverstap" class="kiosk-vak" hidden>
+    <p class="lead">Je persoonlijke antwoorden vul je in op een iPad of op je eigen telefoon. Kies wat jij wilt.</p>
+    <div class="overstap">
+      <article class="kaart">
+        <span class="icoon" aria-hidden="true">📲</span>
+        <h2>Verder op een iPad</h2>
+        <p>Ga naar een van de drie stemhokjes en open Mossy op de iPad.</p>
+        <div id="hokjes"></div>
+      </article>
+      <article class="kaart">
+        <span class="icoon" aria-hidden="true">📱</span>
+        <h2>Verder op je telefoon</h2>
+        <div class="qr-rij">
+          <div id="qr" class="qr-vak"></div>
+          <div>
+            <p>Open de camera van je telefoon, richt die op de QR-code en tik op de link die verschijnt.</p>
+            <p class="klein">Of typ deze link:<br><b id="appLink" class="link"></b></p>
+          </div>
+        </div>
+      </article>
+    </div>
+    <div class="acties rij">
+      <button type="button" class="knop groot" id="bBegin">↺ Terug naar het begin</button>
+    </div>
+  </section>
+
+</body>
+</html>
