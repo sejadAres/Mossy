@@ -33,6 +33,8 @@ function schermVragenlijstDimensie(dimId) {
     vragen: vragenVan(dim.id),
     terug,
     opKlaar: vak => {
+      // Met een inzicht (data/inzichten.js): door naar de visualisatie of uitnodiging.
+      if (INZICHT_INSTELLINGEN[dim.id]) return (location.hash = '#/dimensie/' + dim.id + '/inzicht');
       const score = dimensieScore(dim.id, Sessie.antwoorden());
       vak.innerHTML = `
         <div class="kaart klaar">

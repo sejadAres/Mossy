@@ -8,6 +8,8 @@
      #/dimensies                      dimensiemenu
      #/dimensie/<id>                  drie keuzes voor één dimensie
      #/dimensie/<id>/vragen           vragenlijst van die dimensie
+     #/dimensie/<id>/inzicht          visualisatie of uitnodiging na de vragenlijst
+     #/dimensie/<id>/inzicht/activiteit  de reflectieactiviteit (kompas, tuin, ...)
      #/dimensie/<id>/healthy-hub      fysieke activiteit
      #/dimensie/<id>/webapp           digitale activiteit (of keuze als er meer zijn)
      #/dimensie/<id>/webapp/<naam>    één digitale activiteit, bijv. .../webapp/loslaten
@@ -19,6 +21,8 @@ const ROUTES = [
   [/^dimensies$/, schermDimensiemenu],
   [/^dimensie\/([\w-]+)$/, schermDimensie],
   [/^dimensie\/([\w-]+)\/vragen$/, schermVragenlijstDimensie],
+  [/^dimensie\/([\w-]+)\/inzicht$/, schermInzicht],
+  [/^dimensie\/([\w-]+)\/inzicht\/(activiteit)$/, schermInzicht],
   [/^dimensie\/([\w-]+)\/healthy-hub$/, schermFysiek],
   [/^dimensie\/([\w-]+)\/webapp$/, schermDigitaal],
   [/^dimensie\/([\w-]+)\/webapp\/([\w-]+)$/, schermDigitaal]

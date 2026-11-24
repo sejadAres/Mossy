@@ -30,6 +30,17 @@ const Sessie = {
     this.bewaar(data);
   },
 
+  /* Persoonlijke keuzes in een inzicht-activiteit (kompas, tuin, ...), per dimensie. */
+  inzicht(dimId) {
+    return (this.lees().inzichten || {})[dimId] || {};
+  },
+
+  zetInzicht(dimId, staat) {
+    const data = this.lees();
+    data.inzichten = { ...(data.inzichten || {}), [dimId]: staat };
+    this.bewaar(data);
+  },
+
   heeftAntwoorden() {
     return Object.keys(this.antwoorden()).length > 0;
   },

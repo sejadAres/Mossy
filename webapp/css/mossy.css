@@ -258,6 +258,9 @@ a.kaart:hover { border-color: var(--groen); box-shadow: 0 6px 20px rgba(27, 69, 
 .waar { font-size: 18px; }
 
 
+/* Gesleepte kopie (js/sleep.js) */
+.sleep-kopie { position: fixed; z-index: 50; margin: 0; transform: translate(-50%, -50%) rotate(-4deg); pointer-events: none; box-shadow: 0 10px 30px rgba(27, 69, 91, .3); }
+
 /* ===== Dialoogvensters ===== */
 dialog {
   width: min(92vw, 460px);

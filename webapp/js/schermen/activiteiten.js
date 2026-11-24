@@ -41,15 +41,19 @@ function schermDigitaal(dimId, naam) {
     : [pad, 'Terug naar ' + dim.naam];
   const kop = terugLink(...terug) + `<h1 tabindex="-1">${gekozen.titel}</h1>`;
 
-  if (!ACTIVITEITEN[gekozen.activiteit]) {
+  const gewoon = ACTIVITEITEN[gekozen.activiteit], inzicht = INZICHTEN[gekozen.activiteit];
+  if (!gewoon && !inzicht) {
     return { titel: gekozen.titel, html: kop + nietBeschikbaar(`De activiteit ${gekozen.titel} staat nog niet in de webapp.`, terug) };
   }
 
-  // De activiteit tekent zichzelf in .oefening en geeft een opruimfunctie terug (timers, geluid, microfoon).
+  // De activiteit tekent zichzelf en geeft een opruimfunctie terug (timers, geluid, microfoon).
+  // Een inzicht (kompas, tuin, ...) gebruikt dezelfde module als na de vragenlijst.
   return {
     titel: gekozen.titel,
-    html: kop + `<div class="oefening"></div><div class="acties">${knop(pad, 'Terug naar de keuzes')}</div>`,
-    na: root => ACTIVITEITEN[gekozen.activiteit].start(root.querySelector('.oefening'))
+    html: kop + `<div class="${gewoon ? 'oefening' : 'inzicht'}"></div><div class="acties">${knop(pad, 'Terug naar de keuzes')}</div>`,
+    na: root => gewoon
+      ? gewoon.start(root.querySelector('.oefening'))
+      : inzicht.start(root.querySelector('.inzicht'), inzichtContext(dim))
   };
 }
 

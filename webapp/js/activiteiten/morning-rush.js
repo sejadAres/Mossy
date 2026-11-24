@@ -55,7 +55,14 @@ ACTIVITEITEN['morning-rush'] = {
           <button type="button" class="knop primair" id="mrKlaar">Klaar met plannen</button>
         </div>`;
       vak.querySelector('#mrKlaar').onclick = () => { if (!gebeurtenis) busGebeurtenis(); else resultaat(); };
-      sleepbaar(vak.querySelector('.mr-tegels'), vak.querySelector('#tijdlijn'), voegToe);
+      const lijn = vak.querySelector('#tijdlijn');
+      sleepbaar({
+        container: vak.querySelector('.mr-tegels'),
+        selector: '.mr-tegel',
+        vindDoel: e => (boven(lijn, e) ? lijn : null),
+        opNeerzetten: tegel => voegToe(tegel.dataset.id),
+        opTik: tegel => voegToe(tegel.dataset.id)
+      });
       klok = setInterval(() => { seconden--; tekenKlok(); if (seconden <= 0) resultaat(); }, 1000);
       tekenPlan();
       tekenKlok();
@@ -141,53 +148,3 @@ ACTIVITEITEN['morning-rush'] = {
     return () => clearInterval(klok);
   }
 };
-
-/* Slepen met muis of vinger (pointer events). Tikken of Enter op een tegel werkt ook. */
-function sleepbaar(tegels, doel, opNeerzetten) {
-  let sleep = null, negeerKlik = false;
-
-  tegels.addEventListener('click', e => {
-    const tegel = e.target.closest('.mr-tegel');
-    if (tegel && !negeerKlik) opNeerzetten(tegel.dataset.id);
-    negeerKlik = false;
-  });
-
-  tegels.addEventListener('pointerdown', e => {
-    const tegel = e.target.closest('.mr-tegel');
-    if (!tegel || tegel.disabled) return;
-    sleep = { tegel, x: e.clientX, y: e.clientY, kopie: null };
-    tegel.setPointerCapture(e.pointerId);
-  });
-
-  tegels.addEventListener('pointermove', e => {
-    if (!sleep) return;
-    if (!sleep.kopie && Math.hypot(e.clientX - sleep.x, e.clientY - sleep.y) > 8) {
-      sleep.kopie = sleep.tegel.cloneNode(true);
-      sleep.kopie.classList.add('mr-sleep');
-      document.body.append(sleep.kopie);
-    }
-    if (!sleep.kopie) return;
-    sleep.kopie.style.left = e.clientX + 'px';
-    sleep.kopie.style.top = e.clientY + 'px';
-    doel.classList.toggle('erboven', boven(doel, e));
-  });
-
-  const stop = e => {
-    if (!sleep) return;
-    if (sleep.kopie) {
-      sleep.kopie.remove();
-      negeerKlik = true; // de klik die direct na het slepen komt, telt niet als tik
-      setTimeout(() => { negeerKlik = false; });
-      if (e.type === 'pointerup' && boven(doel, e)) opNeerzetten(sleep.tegel.dataset.id);
-    }
-    doel.classList.remove('erboven');
-    sleep = null;
-  };
-  tegels.addEventListener('pointerup', stop);
-  tegels.addEventListener('pointercancel', stop);
-}
-
-function boven(el, e) {
-  const r = el.getBoundingClientRect();
-  return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top - 20 && e.clientY <= r.bottom + 20;
-}

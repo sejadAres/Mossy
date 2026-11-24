@@ -11,6 +11,8 @@
    - digitaal      lijst met activiteiten in de webapp. 'activiteit' verwijst naar een bestand
                    in js/activiteiten/ (bijv. 'rekken' -> js/activiteiten/rekken.js).
                    Eén activiteit opent direct; bij meer kiest de student eerst.
+                   inzichtAlsGame('<dimensie>') voegt de activiteit van na de vragenlijst toe
+                   (data/inzichten.js); die gebruikt dezelfde module en bewaarde keuzes.
                    Bestaat er geen, dan toont de app "Binnenkort beschikbaar".
    ========================================================= */
 const DIMENSIES = [
@@ -39,7 +41,8 @@ const DIMENSIES = [
     kleur: '#7b3f98',
     omschrijving: 'Zinvol leven, vertrouwen, dankbaarheid, blijven leren en meer.',
     fysiek: { titel: 'Dankbaarheidsbuddy', uitleg: '', stappen: [] },
-    digitaal: [{ titel: 'Mediteren', activiteit: 'mediteren', omschrijving: 'Kom tot rust met een onderwerp om over na te denken.' }]
+    digitaal: [{ titel: 'Mediteren', activiteit: 'mediteren', omschrijving: 'Kom tot rust met een onderwerp om over na te denken.' },
+      inzichtAlsGame('zingeving')]
   },
   {
     id: 'kwaliteit',
@@ -47,7 +50,8 @@ const DIMENSIES = [
     kleur: '#f7a21b',
     omschrijving: 'Genieten, gelukkig zijn, balans, je veilig voelen en meer.',
     fysiek: { titel: 'Smart Money', uitleg: '', stappen: [] },
-    digitaal: [{ titel: 'Geluiden', activiteit: 'geluiden', omschrijving: 'Ontspan met witte ruis, regen of de oceaan.' }]
+    digitaal: [{ titel: 'Geluiden', activiteit: 'geluiden', omschrijving: 'Ontspan met witte ruis, regen of de oceaan.' },
+      inzichtAlsGame('kwaliteit')]
   },
   {
     id: 'meedoen',
@@ -55,7 +59,8 @@ const DIMENSIES = [
     kleur: '#f26a21',
     omschrijving: 'Sociale contacten, erbij horen, steun van anderen en meer.',
     fysiek: { titel: 'Punten verzamelen', uitleg: '', stappen: [] },
-    digitaal: [{ titel: 'Social Challenge', activiteit: 'social-challenge', omschrijving: 'Draai aan het rad voor een sociale uitdaging.' }]
+    digitaal: [{ titel: 'Social Challenge', activiteit: 'social-challenge', omschrijving: 'Draai aan het rad voor een sociale uitdaging.' },
+      inzichtAlsGame('meedoen')]
   },
   {
     id: 'dagelijks',
@@ -63,7 +68,8 @@ const DIMENSIES = [
     kleur: '#7ab536',
     omschrijving: 'Zorgen voor jezelf, je grenzen kennen, omgaan met tijd, hulp vragen en meer.',
     fysiek: { titel: 'Trivia Race', uitleg: '', stappen: [] },
-    digitaal: [{ titel: "Mossy's Morning Rush", activiteit: 'morning-rush', omschrijving: "Plan Mossy's ochtend in 60 minuten." }]
+    digitaal: [{ titel: "Mossy's Morning Rush", activiteit: 'morning-rush', omschrijving: "Plan Mossy's ochtend in 60 minuten." },
+      inzichtAlsGame('dagelijks')]
   }
 ];
 
@@ -72,9 +78,10 @@ function vindDimensie(id) {
   return DIMENSIES.find(d => d.id === id);
 }
 
-/* De webapp-activiteiten van een dimensie die echt in de code staan. */
+/* De webapp-activiteiten van een dimensie die echt in de code staan
+   (een gewone activiteit uit js/activiteiten/ of een inzicht uit js/inzichten/). */
 function digitaleActiviteiten(dim) {
-  return dim.digitaal.filter(a => ACTIVITEITEN[a.activiteit]);
+  return dim.digitaal.filter(a => ACTIVITEITEN[a.activiteit] || INZICHTEN[a.activiteit]);
 }
 
 /* Hier melden de digitale activiteiten zich aan (zie js/activiteiten/).

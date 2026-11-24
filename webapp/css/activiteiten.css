@@ -243,7 +243,7 @@ input[type=range] { width: 100%; min-height: 32px; accent-color: var(--accent); 
 .mr-tegel:disabled { opacity: .35; cursor: default; }
 .mr-tegel small { font-size: 13px; color: var(--muted); }
 .mr-emoji { font-size: 30px; line-height: 1; }
-.mr-sleep { position: fixed; z-index: 50; width: 118px; transform: translate(-50%, -50%) rotate(-4deg); pointer-events: none; box-shadow: 0 10px 30px rgba(27, 69, 91, .3); }
+
 .mr-schaal { width: 100%; display: flex; justify-content: space-between; margin: 18px 0 4px; font-size: 13px; color: var(--muted); }
 .tijdlijn { width: 100%; min-height: 64px; display: flex; align-items: stretch; border: 2px dashed #9fb3bc; border-radius: 14px; background: var(--kaart); overflow: hidden; }
 .tijdlijn.erboven { border-color: var(--groen); background: #e2f2cb; }

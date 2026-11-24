@@ -1,0 +1,195 @@
+/* =========================================================
+   Inzichten na de vragenlijst (js/inzichten/).
+   Zachtgroene achtergronden, donkerblauwe tekst, groene accenten,
+   afgeronde vormen en rustige animaties.
+   ========================================================= */
+.inzicht { width: 100%; max-width: 640px; margin: 0 auto; }
+.inzicht-beeld {
+  margin: 8px 0 16px;
+  padding: clamp(10px, 3vw, 20px);
+  border-radius: 24px;
+  background: linear-gradient(180deg, #f3f9ea, #e8f3da);
+  box-shadow: 0 8px 24px rgba(27, 69, 91, .08);
+}
+.instructie { font-weight: 600; margin: 4px 0 10px; }
+.vraag-label { display: block; font-size: 19px; font-weight: 700; margin: 14px 0 8px; }
+.melding-klein { min-height: 22px; margin: 4px 0 0; color: var(--let-op-tekst); font-weight: 600; font-size: 15px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.inzicht input[type=text], .inzicht textarea {
+  width: 100%; padding: 12px 14px; border: 1.5px solid var(--ring); border-radius: 14px;
+  background: #fff; color: var(--text); font: inherit; font-size: 16px; resize: vertical;
+}
+.inzicht input[type=text]:focus, .inzicht textarea:focus { outline: none; border-color: var(--groen); box-shadow: 0 0 0 4px #96cc4b55; }
+
+/* Tekstballon van Mossy */
+.ballon {
+  position: relative; margin: 0; padding: 12px 16px; border-radius: 18px;
+  background: #fff; box-shadow: 0 4px 14px rgba(27, 69, 91, .1); font-weight: 600;
+}
+
+/* Segmentknoppen (status, keuze) */
+.segment { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.segment button {
+  min-height: 44px; padding: 8px 14px; border: 2px solid var(--ring); border-radius: 999px;
+  background: #fff; color: var(--navy); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.segment button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+/* Uitnodiging na de vragenlijst */
+.uitnodiging { flex-direction: row; align-items: center; gap: 20px; padding: 22px; }
+.uitnodiging img { width: 110px; flex-shrink: 0; }
+@media (max-width: 520px) { .uitnodiging { flex-direction: column; text-align: center; } .uitnodiging .acties { justify-content: center; } }
+
+/* ===== 1. Energy Check ===== */
+.energy { display: flex; align-items: center; justify-content: center; gap: clamp(8px, 4vw, 32px); flex-wrap: wrap; }
+.batterij { width: min(180px, 44%); height: auto; filter: drop-shadow(0 6px 12px rgba(27, 69, 91, .12)); }
+.ec-vulling { transition: transform 1.6s cubic-bezier(.3, .8, .3, 1); }
+.ec-golf { animation: golf 3.2s linear infinite; }
+@keyframes golf { to { transform: translateX(-56px); } }
+.ec-procent { font-size: 30px; font-weight: 800; fill: var(--navy); stroke: #fff; stroke-width: 6px; paint-order: stroke; }
+.ec-mossy { display: flex; flex-direction: column; align-items: center; gap: 8px; width: min(200px, 46%); }
+.ec-mossy img { width: 100%; max-width: 150px; }
+.ec-mossy .ballon { font-size: 15px; text-align: center; }
+.ec-mossy .ballon::after { content: ""; position: absolute; left: 50%; bottom: -8px; border: 8px solid transparent; border-bottom: 0; border-top-color: #fff; transform: translateX(-50%); }
+.ec-uitkomst { text-align: center; margin-bottom: 12px; }
+.ec-uitkomst .label { align-self: center; background: var(--kaart); border: 1px solid var(--ring); }
+.ec-cijfer { margin: 6px 0 0; font-size: 20px; color: var(--muted); }
+.ec-cijfer b { font-size: 48px; color: var(--navy); }
+.ec-niveau { font-weight: 700; margin: 0; }
+.reflectie p:last-child { margin-bottom: 0; }
+
+/* ===== 2. Emotion Clouds ===== */
+.wolken { padding: 0; overflow: hidden; }
+.weer { display: block; width: 100%; height: auto; }
+.wolk-drift { animation: drift 26s ease-in-out infinite alternate; }
+@keyframes drift { from { transform: translateX(-12px); } to { transform: translateX(14px); } }
+.drup { stroke: #7f9fb3; stroke-width: 2; stroke-linecap: round; animation: regen 1.2s linear infinite; }
+@keyframes regen { from { transform: translateY(-6px); opacity: 0; } 30% { opacity: .8; } to { transform: translateY(26px); opacity: 0; } }
+.weer-uitleg .label { background: var(--kaart); border: 1px solid var(--ring); margin-bottom: 6px; }
+.mossy-vraag { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+.mossy-vraag img { width: 72px; flex-shrink: 0; }
+.mossy-vraag .ballon { font-size: 18px; }
+.mossy-vraag .ballon::before { content: ""; position: absolute; left: -8px; top: 50%; border: 8px solid transparent; border-left: 0; border-right-color: #fff; transform: translateY(-50%); }
+
+/* ===== 3. Life Compass ===== */
+.kompas { position: relative; width: min(100%, 360px); aspect-ratio: 1; margin: 0 auto; }
+.kompas svg { width: 100%; height: 100%; display: block; }
+.kompas-mossy { position: absolute; left: 50%; top: 50%; width: 30%; transform: translate(-50%, -50%); }
+.klein-kompas .kompas { width: min(100%, 280px); }
+.kompas-plek {
+  position: absolute; transform: translate(-50%, -50%); z-index: 2;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-width: 88px; min-height: 52px; padding: 6px 10px;
+  border: 2px dashed #9fb3bc; border-radius: 16px; background: rgba(255, 255, 255, .85);
+  color: var(--muted); font: inherit; font-size: 14px; line-height: 1.2; text-align: center;
+}
+button.kompas-plek { cursor: pointer; }
+.kompas-plek.vol { border: 2px solid var(--groen); background: #fff; color: var(--navy); box-shadow: 0 4px 12px rgba(27, 69, 91, .12); }
+.kompas-plek.erboven { border-color: var(--navy); background: #e2f2cb; }
+.kompas-plek .w-icoon { font-size: 20px; }
+.kompas-plek .w-naam { font-weight: 700; white-space: nowrap; }
+.plek-leeg { font-weight: 600; }
+.waarden { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.waarde {
+  display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 8px 12px;
+  border: 2px solid var(--ring); border-radius: 16px; background: #fff; color: var(--navy);
+  font: inherit; font-size: 16px; text-align: left; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.waarde.gekozen { border-color: var(--groen); background: #e2f2cb; }
+.waarde .w-icoon { display: grid; place-items: center; width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; background: var(--kaart); font-size: 18px; }
+.waarde.gekozen .w-icoon { background: #fff; }
+.waarde .w-naam { font-weight: 700; }
+.w-vink { margin-left: auto; color: #2f6b25; font-weight: 800; }
+.waarde-keuze button { display: inline-flex; gap: 6px; align-items: center; }
+.mijn-stap p { margin: 0; font-size: 18px; }
+.mijn-stap p + p { margin-top: 8px; font-size: 15px; }
+
+/* ===== 4. Happiness Garden ===== */
+.tuin-beeld { padding: 8px; }
+.tuin { position: relative; }
+.tuin svg { display: block; width: 100%; height: auto; }
+.plant.groei { animation: groei .8s cubic-bezier(.2, .9, .3, 1.15); transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes groei { from { transform: scale(.05); opacity: 0; } 40% { opacity: 1; } to { transform: scale(1); } }
+.aandacht-rand { fill: rgba(255, 255, 255, .5); stroke: var(--groen); stroke-width: 2.5; stroke-dasharray: 6 5; }
+.plant-label {
+  position: absolute; transform: translateX(-50%); z-index: 2; max-width: 96px; padding: 2px 8px;
+  border: 1.5px solid var(--ring); border-radius: 999px; background: rgba(255, 255, 255, .95);
+  color: var(--navy); font: inherit; font-size: 12px; font-weight: 700; line-height: 1.25; text-align: center;
+}
+button.plant-label { padding: 6px 10px; min-height: 32px; cursor: pointer; border-color: var(--groen); }
+.plant-label.aan { z-index: 3; background: var(--navy); border-color: var(--navy); color: #fff; }
+.aandacht-legenda { display: flex; align-items: center; gap: 10px; margin: 10px 4px 2px; font-weight: 600; }
+.rand-voorbeeld { width: 26px; height: 26px; flex-shrink: 0; border: 2.5px dashed var(--groen); border-radius: 8px; background: rgba(255, 255, 255, .6); }
+.tuin-keuzes { display: flex; flex-wrap: wrap; gap: 8px; }
+.tuin-keuze {
+  display: inline-flex; align-items: center; min-height: 48px; padding: 8px 16px;
+  border: 2px solid var(--ring); border-radius: 999px; background: #fff; color: var(--navy);
+  font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.tuin-keuze[aria-pressed="true"] { border-color: var(--groen); background: #e2f2cb; }
+.overzicht p { margin: 0; }
+.overzicht p + p { margin-top: 6px; }
+
+/* ===== 5. Mossy Connect ===== */
+.connect-keuzes { display: grid; gap: 10px; }
+@media (min-width: 600px) { .connect-keuzes { grid-template-columns: 1fr 1fr; } }
+.connect-keuze {
+  display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px;
+  border: 2px solid var(--ring); border-radius: 16px; background: #fff; color: var(--navy);
+  font: inherit; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer;
+}
+.connect-keuze[aria-pressed="true"] { border-color: var(--groen); background: #e2f2cb; }
+.c-icoon { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: var(--kaart); font-size: 20px; }
+.connect-beeld { margin-top: 14px; }
+.netwerk { position: relative; }
+.netwerk svg { display: block; width: 100%; height: auto; }
+.verbinding { fill: none; stroke: var(--groen); stroke-width: 3; stroke-linecap: round; }
+.verbinding.gepland { stroke-dasharray: 7 7; }
+.verbinding.nieuw, .figuur.nieuw { animation: verschijn .6s ease-out; }
+.figuur.nieuw { transform-box: fill-box; transform-origin: center; }
+@keyframes verschijn { from { opacity: 0; } }
+.verbinding-label {
+  position: absolute; z-index: 2; padding: 3px 9px;
+  border-radius: 12px; background: #fff; box-shadow: 0 3px 10px rgba(27, 69, 91, .12);
+  font-size: 12px; font-weight: 700; line-height: 1.25; text-align: center; white-space: nowrap;
+}
+.verbinding-label small { display: block; font-size: 11px; font-weight: 600; color: var(--muted); }
+.jij-label { position: absolute; transform: translateX(-50%); padding: 2px 12px; border-radius: 999px; background: var(--navy); color: #fff; font-size: 14px; font-weight: 700; }
+.reflectie-kaartje {
+  position: absolute; left: 50%; top: 70%; transform: translateX(-50%); width: min(86%, 320px);
+  padding: 10px 14px; border-radius: 16px; background: #fff; box-shadow: 0 6px 18px rgba(27, 69, 91, .14);
+}
+.reflectie-kaartje::before { content: ""; position: absolute; left: 50%; top: -8px; border: 8px solid transparent; border-top: 0; border-bottom-color: #fff; transform: translateX(-50%); }
+.reflectie-kaartje .label { background: var(--kaart); }
+.reflectie-kaartje p { margin: 4px 0 0; font-weight: 600; font-size: 15px; }
+.gekozen-uitdaging { margin-top: 10px; background: #fff; }
+.gekozen-uitdaging p { margin: 0; }
+
+/* ===== 6. Mini Missions ===== */
+.kamer-beeld { padding: 8px; }
+.kamer { display: block; width: 100%; height: auto; border-radius: 18px; }
+.mm-ding { transition: transform .9s cubic-bezier(.3, .8, .3, 1); transform-box: fill-box; transform-origin: center; }
+.kaartje rect { fill: #fff; stroke: #b8c8d1; stroke-width: 1.5; }
+.kaartje text { font-size: 12px; font-weight: 800; fill: var(--navy); }
+.kaartje.gepland rect { stroke: #64b255; stroke-dasharray: 4 3; stroke-width: 2; }
+.kaartje.gedaan rect { fill: #e2f2cb; stroke: #64b255; stroke-width: 2; }
+.mm-taak { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-weight: 700; margin: 4px 0 10px; }
+.mm-taak .label { background: var(--kaart); border: 1px solid var(--ring); }
+.mm-stappen { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.mm-stap { padding: 12px; border: 1.5px solid var(--ring); border-radius: 16px; background: #fff; }
+.mm-stap.gedaan { background: #f3f9ea; }
+.mm-rij { display: flex; align-items: center; gap: 8px; }
+.mm-rij input { flex: 1; min-width: 0; }
+.mm-nr { display: grid; place-items: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--navy); color: #fff; font-weight: 700; }
+.mm-stap.todo .mm-nr { background: #9fb3bc; }
+.mm-volgorde { display: flex; gap: 4px; }
+.mm-volgorde button { width: 40px; height: 44px; border: 1.5px solid var(--ring); border-radius: 12px; background: #fff; color: var(--navy); font: inherit; font-weight: 700; cursor: pointer; }
+.mm-volgorde button:disabled { opacity: .35; cursor: default; }
+.mm-wanneer { display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 600; margin: 4px 0 8px; }
+.mm-status { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.mm-status.todo { background: #eef2f4; color: var(--muted); }
+.mm-status.gepland { background: #eef6e2; color: var(--navy); border: 1.5px dashed #64b255; }
+.mm-status.gedaan { background: #e2f2cb; color: #2f6b25; }
+.mm-status.gedaan::before { content: "✓ "; }
+.mm-stappen .mm-tekst { flex: 1; font-weight: 600; }
+.mm-stappen li:has(> .mm-tekst) { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
